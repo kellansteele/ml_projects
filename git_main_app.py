@@ -225,29 +225,3 @@ def nlp():
 
 if __name__ == "__main__":
     main()
-
-# Could try: https://discuss.streamlit.io/t/live-webcam-feed-into-the-web-app/397/6
-
-# st.title("Webcam Live Feed")
-# run = st.checkbox('Run')
-# FRAME_WINDOW = st.image([])
-# camera = cv2.VideoCapture(0)
-
-# while run:
-#     _, frame = camera.read()
-#     frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
-#     FRAME_WINDOW.image(frame)
-# else:
-#     st.write('Stopped')
-
-
-
-
-# 1. Capture video stream and port it to app: https://stackoverflow.com/questions/50058811/how-to-access-video-stream-from-an-ip-camera-using-opencv-in-python
-# 2. 
-
-
-
-
-
-#welcome page: "upload up to 6 images with descriptions" <-- these will be the six images on the object detection page

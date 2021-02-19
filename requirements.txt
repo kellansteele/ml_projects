@@ -1,0 +1,12 @@
+av>=8.0.3
+numpy==1.18.2
+torch==1.7.1+cpu
+streamlit==0.76.0
+streamlit_drawable_canvas==0.5.1
+typing_extensions==3.7.4.3
+av==8.0.3
+pandas==1.0.3
+opencv_python==4.5.1.48
+Pillow==8.1.0
+
+

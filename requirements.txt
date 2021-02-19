@@ -1,4 +1,4 @@
-av>=8.0.3
+av==8.0.3
 numpy==1.18.2
 torch==1.7.1+cpu
 streamlit==0.76.0

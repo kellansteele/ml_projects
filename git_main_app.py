@@ -4,7 +4,6 @@ import io
 import logging
 import logging.handlers
 import numpy as np
-import pyodbc
 import pandas as pd
 import PIL
 import queue
@@ -24,13 +23,6 @@ try:
 except ImportError:
     from typing_extensions import Literal  # type: ignore
 
-from aiortc.contrib.media import MediaPlayer
-from streamlit_webrtc import (
-    ClientSettings,
-    VideoTransformerBase,
-    WebRtcMode,
-    webrtc_streamer,
-)
 
 # Define possible models in a dict.
 # Format of the dict:
@@ -41,7 +33,8 @@ MODELS = {
     "Thermal YOLOv5": {  # multiple model variants
         "Batch size: 16, Epochs: 200": "/home/ksteele18/streamlit_yolo/ml_projects/models/exp1_16_200.pt",
         "Batch size: 16, Epochs: 400": "/home/ksteele18/streamlit_yolo/ml_projects/models/exp2_16_400.pt",
-        "Batch size: 20, Epochs: 200": "/home/ksteele18/streamlit_yolo/ml_projects/models/exp2_20_200.pt",
+        "Batch size: 20, Epochs: 200": "/home/ksteele18/streamlit_yolo/ml_projects/models/exp3_20_200.pt",
+        "Batch size: 20, Epochs: 300": "/home/ksteele18/streamlit_yolo/ml_projects/models/exp4_20_300.pt"
     },
 }
 
@@ -71,7 +64,7 @@ def main():
     # Dropdown menu
     selected_box = st.sidebar.selectbox(
     'Choose one of the following',
-    ('Welcome', 'Image Annotation', 'Data Preprocessing', 'Object Detection', 'NLP') #, 'Data Exploration', 'Other obj det')
+    ('Welcome', 'Image Annotation', 'Data Preprocessing', 'Object Detection', 'Natural Language Processing') #, 'Data Exploration', 'Other obj det')
     )
 
     if selected_box == 'Welcome':
@@ -82,7 +75,7 @@ def main():
         preprocess()
     if selected_box == 'Object Detection':
         object_detection()
-    if selected_box == 'NLP':
+    if selected_box == 'Natural Language Processing':
         nlp()
 
 def welcome():
@@ -149,7 +142,7 @@ def object_detection():
 
     # Page header and description
     st.header("YOLOv5 in (thermal) action")
-    st.write("In this project, I've trained a YOLOv5 model (via PyTorch) to detect people and dogs in thermal images. \
+    st.write("In this project, you'll find a trained YOLOv5 model (via PyTorch) to detect people and dogs in thermal images. \
         In the sidebar, you can choose the experiment and the confidence threshold you'd like to use for inferencing. \
         There are 6 different test images to run through the model, each showing different scenarios. \
         Pick your settings and press the 'Detect' button.")
@@ -218,8 +211,16 @@ def object_detection():
     else:
         st.image(image_file, use_column_width=True)
 
+    st.write("\n \n \n \n")
+    expander = st.beta_expander("Dataset info")
+    expander.markdown("The images used to train this model can be found here: [Dogs & People Thermal Images](https://public.roboflow.com/object-detection/thermal-dogs-and-people/1). \
+        Although slightly more challenging, it is straightforward to create your own dataset of images. \
+        To do this you'd need to either scrape the web for images or gather your own, then use an image \
+        annotation tool to create the ground truths (as seen on the Image Annotation page of this app). \
+        Apps that I have used for this include [LabelImg](https://github.com/tzutalin/labelImg), [VoTT](https://github.com/microsoft/VoTT), [Roboflow](https://roboflow.com/)")
+
 def nlp():
-    st.header('Natural Language Processing')
+    st.header('NLP for restaurant reviews')
 
 
 if __name__ == "__main__":

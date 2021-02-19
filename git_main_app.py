@@ -38,20 +38,23 @@ from streamlit_webrtc import (
 # option 2 – if model has multiple variants: model -> model variant -> code
 MODELS = {
 #    "YOLOv3": "YOLOv3",  # single model variant
-    "YOLOv5": {  # multiple model variants
-        "Batch size: 16, Epochs: 90": "v5s_exp1_canister_gs_4.pt",
-        "Batch size: 20, Epochs: 90": "v5s_exp6_canister_gs.pt",
+    "Thermal YOLOv5": {  # multiple model variants
+        "Batch size: 16, Epochs: 200": "/home/ksteele18/streamlit_yolo/ml_projects/models/exp1_16_200.pt",
+        "Batch size: 16, Epochs: 400": "/home/ksteele18/streamlit_yolo/ml_projects/models/exp2_16_400.pt",
+        "Batch size: 20, Epochs: 200": "/home/ksteele18/streamlit_yolo/ml_projects/models/exp2_20_200.pt",
     },
 }
 
 # Define possible images in a dict.
 IMAGES = {
-    "Image 1": "/home/ksteele18/streamlit_yolo/personal/test/images/IMG_0002 4_jpg.rf.6d1c60bf9f8779f13291c0547ea1ff70.jpg",
-    "Image 2 (canister and bag)": "/home/ksteele18/streamlit_yolo/personal/test/images/IMG_0006 5_jpg.rf.cd46e6a862d6ffb7fce6795067ce7cc7.jpg",
-    "Image 3 (jerry can)": "/home/ksteele18/streamlit_yolo/personal/test/images/IMG_0009_jpg.rf.ecdb212f7d7796e682a87e2e1d6e907e.jpg",
-    "Image 4 (no canister)": "2020-07-15-07-56-41-0822891.jpg",
-    "Image 5 (canister over head)": "2020-07-15-13-36-13-5351081.jpg",
-    "Image 6 (carrier bag)": "2020-07-17-17-29-24-3406228.jpg"
+    "Thermal YOLOv5": {
+        "Image 1": "/home/ksteele18/streamlit_yolo/ml_projects/media/test/images/IMG_0033 2_jpg.rf.1ce012dff1ceb8d37c2ee1edd005843b.jpg",
+        "Image 2": "/home/ksteele18/streamlit_yolo/ml_projects/media/test/images/IMG_0006 5_jpg.rf.cd46e6a862d6ffb7fce6795067ce7cc7.jpg",
+        "Image 3": "/home/ksteele18/streamlit_yolo/ml_projects/media/test/images/IMG_0009_jpg.rf.ecdb212f7d7796e682a87e2e1d6e907e.jpg",
+        "Image 4": "/home/ksteele18/streamlit_yolo/ml_projects/media/test/images/IMG_0113_jpg.rf.518ce21582555915f942463375a135b0.jpg",
+        "Image 5": "/home/ksteele18/streamlit_yolo/ml_projects/media/test/images/IMG_0022_jpg.rf.c89662890a0f5d8a915677ed21165d2b.jpg",
+        "Image 6": "/home/ksteele18/streamlit_yolo/ml_projects/media/test/images/IMG_0023 3_jpg.rf.ac45d9a3e591d1377f50b25c2415a5b7.jpg"
+    },
 }
 
 # Define classes the model was trained over
@@ -145,10 +148,11 @@ def object_detection():
     inputs = {}
 
     # Page header and description
-    st.header("Detect canisters")
-    st.write("We use real-time computer vision to detect canisters in images. \
-        From the menu in the sidebar choose the model, experiment, image, and confidence threshold you'd like to use, \
-        then press 'Detect'.")
+    st.header("YOLOv5 in (thermal) action")
+    st.write("In this project, I've trained a YOLOv5 model (via PyTorch) to detect people and dogs in thermal images. \
+        In the sidebar, you can choose the experiment and the confidence threshold you'd like to use for inferencing. \
+        There are 6 different test images to run through the model, each showing different scenarios. \
+        Pick your settings and press the 'Detect' button.")
 
     with st.sidebar:
         model = st.selectbox("Which model?", list(MODELS.keys()))
@@ -160,9 +164,16 @@ def object_detection():
         else:  # only one variant
             inputs["model_func"] = MODELS[model]
 
-        # Show image choices
-        image_choice = st.radio("Which image?", list(IMAGES.keys()))
-        inputs["img_func"] = IMAGES[image_choice]
+        # # Show image choices
+        # image_choice = st.radio("Which image?", list(IMAGES.keys()))
+        # inputs["img_func"] = IMAGES[image_choice]
+
+        # Show image variants if IMAGES has multiple ones.
+        if isinstance(IMAGES[model], dict):  # different image variants
+            image_variant = st.selectbox("Which image?", list(IMAGES[model].keys()))
+            inputs["img_func"] = IMAGES[model][image_variant]
+        else:  # only one variant
+            inputs["img_func"] = IMAGES[model]
 
     # Set model and image files
     model_file = inputs["model_func"]

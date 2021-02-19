@@ -92,7 +92,7 @@ def welcome():
 def annotation():
 
     # Page header and description
-    st.header("Image annotation")
+    st.header("Image annotation for object detection")
     st.write("As part of the data collection step of any object detection pipeline, \
         we have to create the ground truth (GT) of each image. In this step, we draw \
         a bounding box around each canister in an image and make sure to include \
@@ -120,7 +120,7 @@ def annotation():
 def preprocess():
 
     # Page header and description
-    st.header("Pre-process the data")
+    st.header("Pre-process images for object detection")
     st.write("There are many options for pre-processing your data. Some that \
         we use include converting our images to black and white (greyscale) \
         and doing mosaic augmentation. Click through below to see the \
@@ -157,7 +157,7 @@ def object_detection():
     with st.sidebar:
         model = st.selectbox("Which model?", list(MODELS.keys()))
 
-        # Show model variants if model has multiple ones.
+        # Show model variants if there are multiple model categories.
         if isinstance(MODELS[model], dict):  # different model variants
             model_variant = st.selectbox("Which experiment?", list(MODELS[model].keys()))
             inputs["model_func"] = MODELS[model][model_variant]
@@ -168,7 +168,7 @@ def object_detection():
         # image_choice = st.radio("Which image?", list(IMAGES.keys()))
         # inputs["img_func"] = IMAGES[image_choice]
 
-        # Show image variants if IMAGES has multiple ones.
+        # Show image variants if there are multiple image categories.
         if isinstance(IMAGES[model], dict):  # different image variants
             image_variant = st.selectbox("Which image?", list(IMAGES[model].keys()))
             inputs["img_func"] = IMAGES[model][image_variant]

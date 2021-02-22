@@ -1,5 +1,5 @@
-# ml_projects
-A streamlit app to display some of my ML projects.
+# Kellan's Streamlit App for Machine Learning Projects
+A streamlit app which allows you to explore some of my ML projects.
 
 ![Object Detection Page](/media/thermal_page.png)
 

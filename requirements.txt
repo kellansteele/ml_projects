@@ -1,7 +1,9 @@
-python>=3.8.6
+python==3.8.6
 av==8.0.3
 numpy==1.18.2
 torch==1.7.1+cpu
+torchvision==0.8.2+cpu
+torchaudio==0.7.2 
 streamlit==0.76.0
 streamlit_drawable_canvas==0.5.1
 typing_extensions==3.7.4.3

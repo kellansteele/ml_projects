@@ -1,8 +1,8 @@
 python==3.8.8
 av==8.0.3
 numpy==1.18.2
-https://download.pytorch.org/whl/cpu/torch-1.7.1%2Bcpu-cp38-cp38-linux_x86_64.whl
-streamlit==0.76.0
+--find-links https://download.pytorch.org/whl/torch_stable.html
+torch==1.7.1+cpu
 streamlit_drawable_canvas==0.5.1
 typing_extensions==3.7.4.3
 av==8.0.3

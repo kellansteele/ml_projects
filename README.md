@@ -21,3 +21,5 @@ headless = true
 port = $PORT
 enableCORS = false
 " > ~/.streamlit/config.toml```
+
+Thanks to ![this comment](https://discuss.streamlit.io/t/deploying-heroku-error/1310/4) made by tim.

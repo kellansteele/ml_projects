@@ -64,14 +64,14 @@ def main():
     # Dropdown menu
     selected_box = st.sidebar.selectbox(
     'Choose one of the following',
-    ('Welcome', 'Image Annotation', 'Data Preprocessing', 'Object Detection') #, 'Data Exploration', 'Other obj det')
+    ('Welcome', 'Image Annotation', 'Image Preprocessing', 'Object Detection') #, 'Data Exploration', 'Other obj det')
     )
 
     if selected_box == 'Welcome':
         welcome()
     if selected_box == 'Image Annotation':
         annotation()
-    if selected_box == 'Data Preprocessing':
+    if selected_box == 'Image Preprocessing':
         preprocess()
     if selected_box == 'Object Detection':
         object_detection()
@@ -80,7 +80,7 @@ def main():
 
 def welcome():
     st.header("Welcome")
-    st.write("Use the dropdown in the sidebar to explore the Detect project.")
+    st.write("Use the dropdown in the sidebar to explore some of my personal ML project.")
 
 def annotation():
 
@@ -145,7 +145,7 @@ def object_detection():
     st.write("In this project, you'll find a trained YOLOv5 model (via PyTorch) to detect people and dogs in thermal images. \
         In the sidebar, you can choose the experiment and the confidence threshold you'd like to use for inferencing. \
         There are 6 different test images to run through the model, each showing different scenarios. \
-        Pick your settings and press the 'Detect' button.")
+        Pick your settings and press the 'Run' button.")
 
     with st.sidebar:
         model = st.selectbox("Which model?", list(MODELS.keys()))
@@ -184,7 +184,7 @@ def object_detection():
     imgs = [image_file]    # batched list of images
 
     st.sidebar.write("\n")
-    detect_button = st.sidebar.button('Detect')
+    detect_button = st.sidebar.button('Run')
     placeholder = st.empty()
 
     # Once user presses button show image with bounding boxes

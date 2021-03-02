@@ -2,6 +2,7 @@ av==8.0.3
 numpy==1.18.2
 --find-links https://download.pytorch.org/whl/torch_stable.html
 torch==1.7.1+cpu
+torchvision==0.8.2+cpu
 streamlit==0.76.0
 streamlit_drawable_canvas==0.5.1
 typing_extensions==3.7.4.3

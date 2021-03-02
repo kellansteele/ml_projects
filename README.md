@@ -23,3 +23,5 @@ enableCORS = false
 " > ~/.streamlit/config.toml```
 
 Thanks to ![this comment](https://discuss.streamlit.io/t/deploying-heroku-error/1310/4) made by tim.
+
+https://stackoverflow.com/questions/63845382/importerror-libgl-so-1-error-when-accessing-heroku-app

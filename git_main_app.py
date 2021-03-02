@@ -82,7 +82,9 @@ def welcome():
     st.header("Welcome")
     st.write("Hi, my name is Kellan. I'm a Machine Learning Scientist/Data Scientist. \
         My work primarily focuses on Computer Vision, specifically object detection and tracking. \
-        This is a Streamlit app I've created and deployed using Heroku. \
+        I also have experience working with LiDAR and the creation and rendering of 3D point clouds.")
+        
+    st.write("This is a Streamlit app I've created and deployed using Heroku. \
         You can use the dropdown in the sidebar to explore some of my personal ML projects.")
 
 def annotation():

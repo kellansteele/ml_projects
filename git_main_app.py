@@ -7,6 +7,7 @@ import numpy as np
 import pandas as pd
 import PIL
 import queue
+from sklearn.metrics import confusion_matrix, accuracy_score, precision_score, recall_score
 import streamlit as st
 import threading
 import time
@@ -24,7 +25,7 @@ except ImportError:
     from typing_extensions import Literal  # type: ignore
 
 from const import MODELS, IMAGES, CLASSES
-
+from nlp_models import nlpNaiveBayes, nlpLogisticReg, nlpKNearestNeighb, nlpSVM, nlpKernelSVM, nlpDecisionTree, nlpRandomForest
 
 def main():
     
@@ -195,7 +196,36 @@ def object_detection():
 
 def nlp():
     st.header('NLP for restaurant reviews')
+    st.write('ADD PROJECT DESCRIPTION')
 
+    bayes = nlpNaiveBayes()
+    lReg = nlpLogisticReg()
+    knn = nlpKNearestNeighb()
+    svm = nlpSVM()
+    ksvm = nlpKernelSVM()
+    decTree = nlpDecisionTree()
+    randFor = nlpRandomForest()
+
+    d = {
+        'Algorithm': ['Naive Bayes', 'Logistic Regression', 'KNN', 'SVM', 'Kernel SVM', 'Decision Tree', 'Random Forest'],
+        'Accuracy Score': [bayes[0], lReg[0], knn[0], svm[0], ksvm[0], decTree[0], randFor[0]],
+        'Precision Score': [bayes[1], lReg[1], knn[1], svm[1], ksvm[1], decTree[1], randFor[1]],
+        'Recall Score': [bayes[2], lReg[2], knn[2], svm[2], ksvm[2], decTree[2], randFor[2]]
+    }
+
+    df = pd.DataFrame(data=d)
+    df
+
+    st.write('ADD END RESULT/DECISION DESCRIPTION')
+
+    st.write('ADD PREDICTION OF SINGLE REVIEW (whether pos/neg)')
+
+    st.write("\n \n \n \n")
+    expander = st.beta_expander("Score details and definitions")
+    expander.markdown("Accuracy scores for each type\n \
+        Precision Scores: the ability of classifier not to label a negative sample as positive. \n \
+        Recall Scores: the ability of classifier find all the positive samples. \
+    [Roboflow](https://roboflow.com/)")
 
 if __name__ == "__main__":
     main()

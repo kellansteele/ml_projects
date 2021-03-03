@@ -64,7 +64,7 @@ def main():
     # Dropdown menu
     selected_box = st.sidebar.selectbox(
     'Choose one of the following',
-    ('Welcome', 'Image Annotation', 'Image Preprocessing', 'Object Detection') #, 'Data Exploration', 'Other obj det')
+    ('Welcome', 'Image Annotation', 'Object Detection') #, 'Data Exploration', 'Other obj det')
     )
 
     if selected_box == 'Welcome':

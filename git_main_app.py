@@ -93,8 +93,7 @@ def annotation():
     st.header("Image annotation for object detection")
     st.write("As part of the data collection step of any object detection pipeline, \
         we have to create the ground truth (GT) of each image. In this step, we draw \
-        a bounding box around each canister in an image and make sure to include \
-        canisters appearing in reflections.")
+        a bounding box around each object of interest in an image.")
 
     img_annotate = st.sidebar.file_uploader("Upload one image for annotation:", type=["png", "jpg"])
     

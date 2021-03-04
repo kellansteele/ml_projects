@@ -247,12 +247,6 @@ def nlp():
         }
         dfResults = pd.DataFrame(data=testResults)
         dfResults
-        
-
-
-
-    st.write("Now, we repeat the same text preprocessing steps as we did to our data:")
-
 
     st.write("\n \n \n \n")
     expander = st.beta_expander("Score details and definitions")

@@ -6,9 +6,7 @@ MODELS = {
 #    "YOLOv3": "YOLOv3",  # single model variant
     "Thermal YOLOv5": {  # multiple model variants
         "Batch size: 16, Epochs: 200": "models/exp1_16_200.pt",
-        "Batch size: 16, Epochs: 400": "models/exp2_16_400.pt",
         "Batch size: 20, Epochs: 200": "models/exp3_20_200.pt",
-        "Batch size: 20, Epochs: 300": "models/exp4_20_300.pt"
     },
 }
 

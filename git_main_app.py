@@ -35,7 +35,7 @@ def main():
     # Dropdown menu
     selected_box = st.sidebar.selectbox(
     'Choose one of the following',
-    ('Welcome', 'Image Annotation', 'Object Detection', 'Natural Language Processing') #, 'Data Exploration', 'Other obj det')
+    ('Welcome', 'Image Annotation', 'CV: Object Detection', 'NLP: Sentiment Analysis') #, 'Data Exploration', 'Other obj det')
     )
 
     if selected_box == 'Welcome':
@@ -44,9 +44,9 @@ def main():
         annotation()
     if selected_box == 'Image Preprocessing':
         preprocess()
-    if selected_box == 'Object Detection':
+    if selected_box == 'CV: Object Detection':
         object_detection()
-    if selected_box == 'Natural Language Processing':
+    if selected_box == 'NLP: Sentiment Analysis':
         nlp()
 
 def welcome():
@@ -123,7 +123,7 @@ def object_detection():
         Pick your settings and press the 'Run' button.")
     
     with st.sidebar:
-        # model = st.selectbox("Which model?", list(MODELS.keys()))
+        model = st.selectbox("Which model?", list(MODELS.keys()))
 
         # Show model variants if there are multiple model categories.
         if isinstance(MODELS[model], dict):  # different model variants
@@ -195,8 +195,7 @@ def object_detection():
         Apps that I have used for this include [LabelImg](https://github.com/tzutalin/labelImg), [VoTT](https://github.com/microsoft/VoTT), [Roboflow](https://roboflow.com/)")
 
 def nlp():
-    st.header('NLP for restaurant reviews')
-    st.write('ADD PROJECT DESCRIPTION')
+    st.header('Sentiment analysis of restaurant reviews')
 
     bayes = nlpNaiveBayes()
     lReg = nlpLogisticReg()
@@ -205,6 +204,14 @@ def nlp():
     ksvm = nlpKernelSVM()
     decTree = nlpDecisionTree()
     randFor = nlpRandomForest()
+
+    st.write("The dataset used here consists of two columns, one containing the reviews and another containing 0's and 1's for whether review is negative or positive.")
+
+    st.write(bayes[3].head(10))
+    
+    st.write("The first steps are to clean the data and build the bag-of-words model. \
+        Next, we split the dataset into training and testing sets, fit the model, and predict the test set results. \
+        Finally, we look at the confusion matrix (not depicted here), accuracy score, precision score, and recall score for the model to understand its performance.")
 
     d = {
         'Algorithm': ['Naive Bayes', 'Logistic Regression', 'KNN', 'SVM', 'Kernel SVM', 'Decision Tree', 'Random Forest'],
@@ -218,14 +225,41 @@ def nlp():
 
     st.write('ADD END RESULT/DECISION DESCRIPTION')
 
-    st.write('ADD PREDICTION OF SINGLE REVIEW (whether pos/neg)')
+    st.write("Since the Naive Bayes model had the best performance, let's put it to the test! \
+        Let's predict whether the following reviews are positive or negative:")
+
+    review_1 = 'I love this restaurant so much'
+    review_2 = 'I hate this restaurant so much'
+
+    predict_button = st.button('Predict')
+    if predict_button:
+        testResults = {
+        'Review': [review_1, review_2],
+        'Prediction': [bayes[4], bayes[5]]
+        }
+        dfResults = pd.DataFrame(data=testResults)
+        dfResults
+
+    else:
+        testResults = {
+        'Review': [review_1, review_2],
+        'Prediction': [ '', '']
+        }
+        dfResults = pd.DataFrame(data=testResults)
+        dfResults
+        
+
+
+
+    st.write("Now, we repeat the same text preprocessing steps as we did to our data:")
+
 
     st.write("\n \n \n \n")
     expander = st.beta_expander("Score details and definitions")
-    expander.markdown("Accuracy scores for each type\n \
-        Precision Scores: the ability of classifier not to label a negative sample as positive. \n \
-        Recall Scores: the ability of classifier find all the positive samples. \
-    [Roboflow](https://roboflow.com/)")
+    expander.markdown("Accuracy scores for each type")
+    expander.markdown("Precision Scores: the ability of classifier not to label a negative sample as positive.")
+    expander.markdown("Recall Scores: the ability of classifier find all the positive samples.")
+    #[Roboflow](https://roboflow.com/)
 
 if __name__ == "__main__":
     main()

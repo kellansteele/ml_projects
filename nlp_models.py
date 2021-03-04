@@ -9,14 +9,19 @@ from nltk.corpus import stopwords
 from nltk.stem.porter import PorterStemmer
 
 from sklearn.feature_extraction.text import CountVectorizer
-from sklearn.naive_bayes import GaussianNB
 from sklearn.model_selection import train_test_split
+from sklearn.naive_bayes import GaussianNB
 from sklearn.linear_model import LogisticRegression
 from sklearn.neighbors import KNeighborsClassifier
 from sklearn.svm import SVC
 from sklearn.tree import DecisionTreeClassifier
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.metrics import confusion_matrix, accuracy_score, precision_score, recall_score
+
+VALUES = {
+    0: "Negative",
+    1: "Positive"
+}
 
 dataset_restaurant = pd.read_csv('data/Restaurant_Reviews.tsv', delimiter = '\t', quoting = 3)
 
@@ -33,8 +38,6 @@ for i in range(0, 1000):                                    # treat each review 
     review = ' '.join(review)                                 # rejoin and add spaces to each word in review
     corpus.append(review)
 
-#st.write(corpus)
-
 # Creating bag of words model
 cv = CountVectorizer(max_features = 1500)     # max_features allows you to ignore words that rarely appear
 X = cv.fit_transform(corpus).toarray()        # create matrix of features
@@ -42,7 +45,7 @@ y = dataset_restaurant.iloc[:, -1].values
 
 # Split dataset into train/test sets
 X_train, X_test, y_train, y_test = train_test_split(X, y, test_size = 0.2, random_state = 0)
-    
+
 # Naive Bayes
 def nlpNaiveBayes():
     # Train the Naive Bayes model
@@ -56,7 +59,32 @@ def nlpNaiveBayes():
     precisionNB = precision_score(y_test, y_predNB)
     recallNB = recall_score(y_test, y_predNB)
 
-    return(accuracyNB, precisionNB, recallNB)
+    review_1 = 'I love this restaurant so much'
+    review_1 = re.sub('[^a-zA-Z]', ' ', review_1)
+    review_1 = review_1.lower()
+    review_1 = review_1.split()
+    ps = PorterStemmer()
+    all_stopwords = stopwords.words('english')
+    all_stopwords.remove('not')
+    review_1 = [ps.stem(word) for word in review_1 if not word in set(all_stopwords)]
+    review_1 = ' '.join(review_1)
+    corpus_1 = [review_1]
+    X_test_1 = cv.transform(corpus_1).toarray()
+    y_pred_1 = classifier.predict(X_test_1)
+    y_pred_1 = VALUES[int(y_pred_1[0].item())]
+
+    review_2 = 'I hate this restaurant so much'
+    review_2 = re.sub('[^a-zA-Z]', ' ', review_2)
+    review_2 = review_2.lower()
+    review_2 = review_2.split()
+    review_2 = [ps.stem(word) for word in review_2 if not word in set(all_stopwords)]
+    review_2 = ' '.join(review_2)
+    corpus_2 = [review_2]
+    X_test_2 = cv.transform(corpus_2).toarray()
+    y_pred_2 = classifier.predict(X_test_2)
+    y_pred_2 = VALUES[int(y_pred_2[0].item())]
+
+    return(accuracyNB, precisionNB, recallNB, dataset_restaurant, y_pred_1, y_pred_2)
 
 # logistic regression
 def nlpLogisticReg():

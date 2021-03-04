@@ -1,6 +1,12 @@
+import io
 import numpy as np
-import matplotlib.pyplot as plt
 import pandas as pd
+import PIL
+from sklearn.metrics import confusion_matrix, accuracy_score, precision_score, recall_score
+import urllib.request
+
+from const import SENT_VALUES
+import matplotlib.pyplot as plt
 import re
 import nltk
 import streamlit as st
@@ -16,30 +22,45 @@ from sklearn.svm import SVC
 from sklearn.tree import DecisionTreeClassifier
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.metrics import confusion_matrix, accuracy_score, precision_score, recall_score
-from const import SENT_VALUES
 
-dataset_restaurant = pd.read_csv('data/Restaurant_Reviews.tsv', delimiter = '\t', quoting = 3)
 
-# Data cleaning
-corpus = []
-for i in range(0, 1000):                                    # treat each review separately
-    review = re.sub('[^a-zA-Z]', ' ', dataset_restaurant['Review'][i])   # replace things that aren't letters by a space
-    review = review.lower()                                   # make everything lowercase
-    review = review.split()                                   # split into different words
-    ps = PorterStemmer()
-    allStopwords = stopwords.words('english')
-    allStopwords.remove('not')
-    review = [ps.stem(word) for word in review if not word in set(allStopwords)] # stem all words that are not stop words, e.g. 'loved' -> 'loved'
-    review = ' '.join(review)                                 # rejoin and add spaces to each word in review
-    corpus.append(review)
+@st.cache
+def load_data():
+    df = pd.read_csv('data/Restaurant_Reviews.tsv', delimiter = '\t', quoting = 3)
+    # Data cleaning
+    corpus = []
+    for i in range(0, 1000):                                    # treat each review separately
+        review = re.sub('[^a-zA-Z]', ' ', df['Review'][i])   # replace things that aren't letters by a space
+        review = review.lower()                                   # make everything lowercase
+        review = review.split()                                   # split into different words
+        ps = PorterStemmer()
+        allStopwords = stopwords.words('english')
+        allStopwords.remove('not')
+        review = [ps.stem(word) for word in review if not word in set(allStopwords)] # stem all words that are not stop words, e.g. 'loved' -> 'loved'
+        review = ' '.join(review)                                 # rejoin and add spaces to each word in review
+        corpus.append(review)
+    return df, corpus
 
-# Creating bag of words model
-cv = CountVectorizer(max_features = 1500)     # max_features allows you to ignore words that rarely appear
-X = cv.fit_transform(corpus).toarray()        # create matrix of features
-y = dataset_restaurant.iloc[:, -1].values
+df = load_data()[0]
+corpus = load_data()[1]
 
-# Split dataset into train/test sets
-X_train, X_test, y_train, y_test = train_test_split(X, y, test_size = 0.2, random_state = 0)
+@st.cache
+def split_data():
+    # Creating bag of words model
+    cv = CountVectorizer(max_features = 1500)     # max_features allows you to ignore words that rarely appear
+    X = cv.fit_transform(corpus).toarray()        # create matrix of features
+    y = df.iloc[:, -1].values
+
+    # Split dataset into train/test sets
+    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size = 0.2, random_state = 0)
+
+    return cv, X_train, X_test, y_train, y_test
+
+cv = split_data()[0]
+X_train = split_data()[1]
+X_test = split_data()[2]
+y_train = split_data()[3]
+y_test = split_data()[4]
 
 # Naive Bayes
 def nlpNaiveBayes():
@@ -53,35 +74,9 @@ def nlpNaiveBayes():
     accuracyNB = accuracy_score(y_test, y_predNB)
     precisionNB = precision_score(y_test, y_predNB)
     recallNB = recall_score(y_test, y_predNB)
-
-    review_1 = 'I love this restaurant so much'
-    review_1 = re.sub('[^a-zA-Z]', ' ', review_1)
-    review_1 = review_1.lower()
-    review_1 = review_1.split()
-    ps = PorterStemmer()
-    all_stopwords = stopwords.words('english')
-    all_stopwords.remove('not')
-    review_1 = [ps.stem(word) for word in review_1 if not word in set(all_stopwords)]
-    review_1 = ' '.join(review_1)
-    corpus_1 = [review_1]
-    X_test_1 = cv.transform(corpus_1).toarray()
-    y_pred_1 = classifier.predict(X_test_1)
-    y_pred_1 = SENT_VALUES[int(y_pred_1[0].item())]
-
-    review_2 = 'I hate this restaurant so much'
-    review_2 = re.sub('[^a-zA-Z]', ' ', review_2)
-    review_2 = review_2.lower()
-    review_2 = review_2.split()
-    review_2 = [ps.stem(word) for word in review_2 if not word in set(all_stopwords)]
-    review_2 = ' '.join(review_2)
-    corpus_2 = [review_2]
-    X_test_2 = cv.transform(corpus_2).toarray()
-    y_pred_2 = classifier.predict(X_test_2)
-    y_pred_2 = SENT_VALUES[int(y_pred_2[0].item())]
-
     cmNB = confusion_matrix(y_test, y_predNB)
 
-    return(accuracyNB, precisionNB, recallNB, dataset_restaurant, cmNB, y_pred_1, y_pred_2)
+    return(accuracyNB, precisionNB, recallNB, cmNB, classifier)#, y_pred_1, y_pred_2)
 
 # logistic regression
 def nlpLogisticReg():
@@ -95,7 +90,6 @@ def nlpLogisticReg():
     accuracyLR = accuracy_score(y_test, y_predLR)
     precisionLR = precision_score(y_test, y_predLR)
     recallLR = recall_score(y_test, y_predLR)
-
     cmLR = confusion_matrix(y_test, y_predLR)
 
     return(accuracyLR, precisionLR, recallLR, cmLR)
@@ -113,7 +107,6 @@ def nlpKNearestNeighb():
     accuracyKNN = accuracy_score(y_test, y_predKNN)
     precisionKNN = precision_score(y_test, y_predKNN)
     recallKNN = recall_score(y_test, y_predKNN)
-
     cmKNN = confusion_matrix(y_test, y_predKNN)
 
     return(accuracyKNN, precisionKNN, recallKNN, cmKNN)
@@ -130,7 +123,6 @@ def nlpSVM():
     accuracySVM = accuracy_score(y_test, y_predSVM)
     precisionSVM = precision_score(y_test, y_predSVM)
     recallSVM = recall_score(y_test, y_predSVM)
-
     cmSVM = confusion_matrix(y_test, y_predSVM)
 
     return(accuracySVM, precisionSVM, recallSVM, cmSVM)
@@ -147,7 +139,6 @@ def nlpKernelSVM():
     accuracyKernelSVM = accuracy_score(y_test, y_predKernelSVM)
     precisionKernelSVM = precision_score(y_test, y_predKernelSVM)
     recallKernelSVM = recall_score(y_test, y_predKernelSVM)
-
     cmKernelSVM = confusion_matrix(y_test, y_predKernelSVM)
 
     return(accuracyKernelSVM, precisionKernelSVM, recallKernelSVM, cmKernelSVM)
@@ -164,7 +155,6 @@ def nlpDecisionTree():
     accuracyDecisionTree = accuracy_score(y_test, y_predDecisionTree)
     precisionDecisionTree = precision_score(y_test, y_predDecisionTree)
     recallDecisionTree = recall_score(y_test, y_predDecisionTree)
-
     cmDecisionTree = confusion_matrix(y_test, y_predDecisionTree)
 
     return(accuracyDecisionTree, precisionDecisionTree, recallDecisionTree, cmDecisionTree)
@@ -181,7 +171,22 @@ def nlpRandomForest():
     accuracyRFC = accuracy_score(y_test, y_predRFC)
     precisionRFC = precision_score(y_test, y_predRFC)
     recallRFC = recall_score(y_test, y_predRFC)
-
     cmRFC = confusion_matrix(y_test, y_predRFC)
 
     return(accuracyRFC, precisionRFC, recallRFC, cmRFC)
+
+def userSent(userInput, classifier):
+    userInput = re.sub('[^a-zA-Z]', ' ', userInput)
+    userInput = userInput.lower()
+    userInput = userInput.split()
+    ps = PorterStemmer()
+    all_stopwords = stopwords.words('english')
+    all_stopwords.remove('not')
+    userInput = [ps.stem(word) for word in userInput if not word in set(all_stopwords)]
+    userInput = ' '.join(userInput)
+    corpus_1 = [userInput]
+    X_test_1 = cv.transform(corpus_1).toarray()
+    y_pred_1 = classifier.predict(X_test_1)
+    y_pred_1 = SENT_VALUES[int(y_pred_1[0].item())]
+
+    return y_pred_1

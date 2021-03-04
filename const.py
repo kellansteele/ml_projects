@@ -27,3 +27,9 @@ CLASSES = {
     0:"dog",
     1:"person"
 }
+
+# Define values for sentiment analysis
+SENT_VALUES = {
+    0: "negative",
+    1: "positive"
+}

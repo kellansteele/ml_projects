@@ -24,8 +24,9 @@ try:
 except ImportError:
     from typing_extensions import Literal  # type: ignore
 
-from const import MODELS, IMAGES, CLASSES
-from nlp_models import nlpNaiveBayes, nlpLogisticReg, nlpKNearestNeighb, nlpSVM, nlpKernelSVM, nlpDecisionTree, nlpRandomForest
+from const import *
+# from nlp_models import *
+from nlp_trial import *
 
 def main():
     
@@ -35,7 +36,7 @@ def main():
     # Dropdown menu
     selected_box = st.sidebar.selectbox(
     'Choose one of the following',
-    ('Welcome', 'Image Annotation', 'CV: Object Detection', 'NLP: Sentiment Analysis') #, 'Data Exploration', 'Other obj det')
+    ('Welcome', 'Image Annotation', 'CV: Object Detection', 'NLP: Sentiment Analysis', 'NLP: Recipe Recommender') #, 'Data Exploration', 'Other obj det')
     )
 
     if selected_box == 'Welcome':
@@ -48,6 +49,8 @@ def main():
         object_detection()
     if selected_box == 'NLP: Sentiment Analysis':
         nlp()
+    if selected_box == 'NLP: Recipe Recommender':
+        nlpRecipe()
 
 def welcome():
     st.header("Welcome")
@@ -205,48 +208,44 @@ def nlp():
     decTree = nlpDecisionTree()
     randFor = nlpRandomForest()
 
-    st.write("The dataset used here consists of two columns, one containing the reviews and another containing 0's and 1's for whether review is negative or positive.")
+    # st.write("The dataset used here consists of two columns, one containing the reviews and another containing 0's and 1's for whether review is negative or positive.")
 
-    st.write(bayes[3].head(10))
+    if st.sidebar.checkbox("Show sample of the dataset"):
+        st.sidebar.write(load_data()[0].head(10))
     
+    st.subheader("About the dataset")
+    st.write("The dataset used here consists of two columns, one containing the reviews and another containing 0's and 1's for whether review is negative or positive. \
+        You can use the toggle in the sidebar to view the dataset.")
+    
+    st.subheader("Compare algorithm performance")
     st.write("The first steps are to clean the data and build the bag-of-words model. \
         Next, we split the dataset into training and testing sets, fit the model, and predict the test set results. \
-        Finally, we look at the confusion matrix (not depicted here), accuracy score, precision score, and recall score for the model to understand its performance.")
+        Finally, we look at the confusion matrix (use the toggle in the sidebar), accuracy score, precision score, \
+        and recall score for each algorithm to understand its performance.")
 
     d = {
-        'Algorithm': ['Naive Bayes', 'Logistic Regression', 'KNN', 'SVM', 'Kernel SVM', 'Decision Tree', 'Random Forest'],
+        'Algorithm': ['Naive Bayes', 'Logistic Regression', 'k-NN', 'SVM', 'Kernel SVM', 'Decision Tree', 'Random Forest'],
         'Accuracy Score': [bayes[0], lReg[0], knn[0], svm[0], ksvm[0], decTree[0], randFor[0]],
         'Precision Score': [bayes[1], lReg[1], knn[1], svm[1], ksvm[1], decTree[1], randFor[1]],
         'Recall Score': [bayes[2], lReg[2], knn[2], svm[2], ksvm[2], decTree[2], randFor[2]]
     }
 
     df = pd.DataFrame(data=d)
-    df
+    st.table(df)
 
+    st.subheader("")
+    
     st.write('ADD END RESULT/DECISION DESCRIPTION')
+    if st.sidebar.checkbox("Show confusion matrices"):
+        st.sidebar.write('Naives Bayes:', bayes[3], '\n', 'Logistic regression:', lReg[3], '\n', 'k-nearest neighbours:', knn[3], '\n', 'SVM:', svm[3], '\n', 'Kernel SVM: ', ksvm[3], '\n', 'Decision Tree:', decTree[3], '\n', 'Random Forest: ', randFor[3])
 
-    st.write("Since the Naive Bayes model had the best performance, let's put it to the test! \
-        Let's predict whether the following reviews are positive or negative:")
-
-    review_1 = 'I love this restaurant so much'
-    review_2 = 'I hate this restaurant so much'
-
-    predict_button = st.button('Predict')
-    if predict_button:
-        testResults = {
-        'Review': [review_1, review_2],
-        'Prediction': [bayes[4], bayes[5]]
-        }
-        dfResults = pd.DataFrame(data=testResults)
-        dfResults
-
-    else:
-        testResults = {
-        'Review': [review_1, review_2],
-        'Prediction': [ '', '']
-        }
-        dfResults = pd.DataFrame(data=testResults)
-        dfResults
+    st.write("Since the Naive Bayes model had the best performance, let's put it to the test!")
+    userReview = st.text_input('Enter your review in the textbox, then press the "Predict" button to see what the Naive Bayes model predicts.')
+    userIn_button = st.button('Predict')
+    
+    if userIn_button:
+        NBprediction = userSent(userReview, bayes[4])
+        st.write('You gave a ', NBprediction, ' review.')
 
     st.write("\n \n \n \n")
     expander = st.beta_expander("Score details and definitions")
@@ -255,5 +254,7 @@ def nlp():
     expander.markdown("Recall Scores: the ability of classifier find all the positive samples.")
     #[Roboflow](https://roboflow.com/)
 
+def nlpRecipe():
+    pass
 if __name__ == "__main__":
     main()

@@ -31,7 +31,7 @@ from nlp_trial import *
 def main():
     
     # Sidebar title
-    st.sidebar.title('Explore my ML projects')
+    st.sidebar.title("Explore Kellan's ML projects")
 
     # Dropdown menu
     selected_box = st.sidebar.selectbox(
@@ -233,13 +233,15 @@ def nlp():
     df = pd.DataFrame(data=d)
     st.table(df)
 
-    st.subheader("")
+    st.subheader("Results")
     
     st.write('ADD END RESULT/DECISION DESCRIPTION')
     if st.sidebar.checkbox("Show confusion matrices"):
         st.sidebar.write('Naives Bayes:', bayes[3], '\n', 'Logistic regression:', lReg[3], '\n', 'k-nearest neighbours:', knn[3], '\n', 'SVM:', svm[3], '\n', 'Kernel SVM: ', ksvm[3], '\n', 'Decision Tree:', decTree[3], '\n', 'Random Forest: ', randFor[3])
 
     st.write("Since the Naive Bayes model had the best performance, let's put it to the test!")
+    
+    st.subheader("Test it out with your own review!")
     userReview = st.text_input('Enter your review in the textbox, then press the "Predict" button to see what the Naive Bayes model predicts.')
     userIn_button = st.button('Predict')
     
@@ -247,12 +249,11 @@ def nlp():
         NBprediction = userSent(userReview, bayes[4])
         st.write('You gave a ', NBprediction, ' review.')
 
-    st.write("\n \n \n \n")
+    # Explain what scores mean
     expander = st.beta_expander("Score details and definitions")
     expander.markdown("Accuracy scores for each type")
     expander.markdown("Precision Scores: the ability of classifier not to label a negative sample as positive.")
     expander.markdown("Recall Scores: the ability of classifier find all the positive samples.")
-    #[Roboflow](https://roboflow.com/)
 
 def nlpRecipe():
     pass

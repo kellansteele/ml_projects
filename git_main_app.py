@@ -36,7 +36,7 @@ def main():
     # Dropdown menu
     selected_box = st.sidebar.selectbox(
     'Choose one of the following',
-    ('Welcome', 'Image Annotation', 'CV: Object Detection', 'NLP: Sentiment Analysis', 'NLP: Recipe Recommender') #, 'Data Exploration', 'Other obj det')
+    ('Welcome', 'Image Annotation', 'CV: Object Detection', 'NLP: Sentiment Analysis')#, 'NLP: Recipe Recommender') #, 'Data Exploration', 'Other obj det')
     )
 
     if selected_box == 'Welcome':
@@ -249,11 +249,14 @@ def nlp():
         NBprediction = userSent(userReview, bayes[4])
         st.write('You gave a ', NBprediction, ' review.')
 
+
+
     # Explain what scores mean
     expander = st.beta_expander("Score details and definitions")
-    expander.markdown("Accuracy scores for each type")
-    expander.markdown("Precision Scores: the ability of classifier not to label a negative sample as positive.")
-    expander.markdown("Recall Scores: the ability of classifier find all the positive samples.")
+    expander.markdown("Accuracy scores: the ratio of the total number of correct predictions and the total number of predictions.")
+    expander.markdown("Precision Scores: the ratio between the true positives and all the positives.")
+    expander.markdown("Recall Scores: the measure of our model correctly identifying true positives (i.e. the ability of the model to find all the positive samples).")
+    expander.markdown("F1 Scores: a weighted average of the precision and recall, where an F1 score reaches its best value at 1 and worst value at 0")
 
 def nlpRecipe():
     pass
